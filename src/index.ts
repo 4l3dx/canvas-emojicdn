@@ -1,3 +1,4 @@
-import { fillText } from './fillText'
+export { fillText } from './fillText'
+export { measureText } from './measureText'
 
-export { fillText }
+export { Style, TextMetrics } from './types'

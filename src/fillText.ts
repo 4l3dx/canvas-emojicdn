@@ -1,36 +1,34 @@
 import { CanvasRenderingContext2D, loadImage } from 'canvas'
-import Graphemer from 'graphemer'
-const emojicdn = 'https://emojicdn.elk.sh/{emoji}?style={style}'
-
-type Style = 'whatsapp' | 'twitter' | 'facebook' | 'messenger' | 'joypixels' | 'openmoji' | 'emojidex' | 'lg' | 'htc' | 'mozilla' | 'apple' | 'google' | 'microsoft' | 'samsung'
+import { Style } from './types'
+import { splitter } from './utils/splitter'
 
 /**
- * @param context - The canvas context to draw on
- * @param text - The text to draw
- * @param x - The x coordinate to draw the text
- * @param y - The y coordinate to draw the text
- * @param style - The style of the emoji
+ * @param {CanvasRenderingContext2D} context - The context of the canvas you're drawing on.
+ * @param {string} text - The text to fill.
+ * @param {number} x - x coordinate of the text.
+ * @param {number} y - y coordinate of the text.
+ * @param {Style} style - The style of the emoji.
  */
-
 export const fillText = async (context: CanvasRenderingContext2D, text: string, x: number, y: number, style: Style = 'apple'): Promise<void> => {
-  const graphemes = new Graphemer().splitGraphemes(text)
-  const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-  const measureText = context.measureText(alphabet) as any
-  const fontWidth = measureText.width / alphabet.length
-  const fontHeight = +measureText.actualBoundingBoxAscent + +measureText.actualBoundingBoxDescent
-  let widthWithEmoji = 0
-  for (let i = 0; i < graphemes.length; i++) {
-    const grapheme = graphemes[i]
-    if (grapheme.length === 1) {
-      context.fillText(grapheme, x + widthWithEmoji, y)
-      widthWithEmoji += context.measureText(grapheme).width
+  const segments = splitter(text)
+  const match = /\d+/.exec(context.font)
+  const fontSize = match !== null ? parseInt(match[0]) : 0
+  const padding = fontSize * 0.15
+  // TODO: implement maxWidth
+  let width = 0
+  for (const segment of segments) {
+    if (segment.length === 1) {
+      context.fillText(segment, x + width, y)
+      width += context.measureText(segment).width
     }
-    if (grapheme.length > 1) {
-      const emojipath = emojicdn.replace('{emoji}', grapheme).replace('{style}', style)
-      const img = await loadImage(encodeURI(emojipath))
-      const scale = fontWidth * 1.5 / img.width
-      context.drawImage(img, x + widthWithEmoji, y - (fontHeight * 0.9), scale * img.width, scale * img.height)
-      widthWithEmoji += fontWidth * 1.5
+    if (segment.length > 1) {
+      const url = encodeURI(`https://emojicdn.elk.sh/${segment}?style=${style}`)
+      const img = await loadImage(url).catch(e => {})
+      if (img !== undefined) {
+        const scale = fontSize * 1.1
+        context.drawImage(img, x + width + padding, y - scale * 0.9, scale, scale)
+        width += fontSize + padding * 2
+      }
     }
   }
 }
