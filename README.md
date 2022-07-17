@@ -19,20 +19,25 @@ import { fillText } from 'canvas-emojicnd'
 
 (async () => {
   const text = 'Hello, world!👋🥳'
-  const canvas = createCanvas(500, 500)
+  const canvas = createCanvas(200, 200)
   const ctx = canvas.getContext('2d')
   ctx.fillStyle = '#000'
-  ctx.font = '50px Arial'
+  ctx.strokeStyle = '#fff'
+  ctx.font = '25px Arial'
   
   // Get the width of the text
-  const { width } = await measureText(ctx, text)
+  const { width } = await measureText(ctx, text, 'whatsapp')
 
   // Draw the text:
-  await fillText(ctx, text, canvas.width / 2 - width / 2, 0, 'whatsapp')
+  await fillText(ctx, text, canvas.width / 2 - width / 2, 100, 'whatsapp')
+  await strokeText(ctx, text, canvas.width / 2 - width / 2, 200, 'whatsapp')
 
 })()
 ```
 
+<p align="center">
+  <img src="example/example.png" />
+</p>
 
 Supported emoji styles: 
 
