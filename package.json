@@ -1,6 +1,6 @@
 {
   "name": "canvas-emojicdn",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Add emoji support to canvas with emojicdn",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
