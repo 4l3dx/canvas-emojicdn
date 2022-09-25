@@ -15,7 +15,7 @@ npm install canvas-emojicnd
 
 ```typescript
 import { createCanvas, measureText } from 'canvas'
-import { fillText } from 'canvas-emojicnd'
+import { fillText, strokeText } from 'canvas-emojicdn'
 
 (async () => {
   const text = 'Hello, world!👋🥳'
